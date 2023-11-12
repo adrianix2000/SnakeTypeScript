@@ -26,11 +26,13 @@ class SnakeMap {
         this.width = width;
         this.height = height;
         this.block = new Block(25, 25, 'black');
-        this.mapContent = "";
-        this.snake = new Snake(1, 1);
+        this.mapContent = '';
+        this.currentCoords = { x: 1, y: 1 };
+        this.snake = new Snake(this.currentCoords.x, this.currentCoords.y);
         this.generateMap();
     }
     generateMap() {
+        this.mapContent = '';
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 if (this.snake.getCoords().some(coord => coord.x === x && coord.y === y)) {
@@ -40,7 +42,7 @@ class SnakeMap {
                     this.mapContent += this.block.getBlockHTML();
                 }
             }
-            this.mapContent += "<br>";
+            this.mapContent += '<br>';
         }
     }
     getGeneratedMap() {
@@ -58,36 +60,69 @@ class GameRound {
     constructor(element) {
         this.canvas = element;
         this.map = new SnakeMap(20, 20);
-        this.drawMap();
-        this.setupKeyboardControls();
         this.isStopped = true;
-        this.mainLoop();
+        this.direction = 'p';
+        this.frame();
+        this.setupKeyboardControls();
     }
-    mainLoop() {
-        while (this.isStopped) {
+    frame() {
+        switch (this.direction) {
+            case 'd':
+                this.map.currentCoords.y--;
+                if (this.map.currentCoords.y < 0)
+                    this.map.currentCoords.y = this.map.height;
+                break;
+            case 'g':
+                this.map.currentCoords.y++;
+                if (this.map.currentCoords.y >= this.map.height)
+                    this.map.currentCoords.y = 0;
+                break;
+            case 'p':
+                this.map.currentCoords.x++;
+                if (this.map.currentCoords.x >= this.map.width)
+                    this.map.currentCoords.x = 0;
+                break;
+            case 'l':
+                this.map.currentCoords.x--;
+                if (this.map.currentCoords.x < 0)
+                    this.map.currentCoords.x = this.map.width;
+                break;
         }
+        this.map.snake.coordinates.push(Object.assign({}, this.map.currentCoords)); // tworzenie kopii koordynatów a nie przekazywanie referencji do nich
+        if (this.map.snake.coordinates.length > 6) {
+            this.map.snake.coordinates.shift();
+        }
+        // Rysuj mapę
+        this.drawMap();
+        setTimeout(() => {
+            requestAnimationFrame(() => this.frame());
+        }, 70);
     }
     drawMap() {
+        this.map.generateMap();
         this.canvas.innerHTML = this.map.getGeneratedMap();
     }
     setupKeyboardControls() {
         document.addEventListener('keydown', (event) => {
             switch (event.key) {
-                case 'ArrowUp':
-                    console.log("up");
-                    break;
                 case 'ArrowDown':
-                    console.log("down");
+                    if (this.direction != 'd')
+                        this.direction = 'g';
                     break;
-                case 'ArrowLeft':
-                    console.log("left");
+                case 'ArrowUp':
+                    if (this.direction != 'g')
+                        this.direction = 'd';
                     break;
                 case 'ArrowRight':
-                    console.log("right");
+                    if (this.direction != 'l')
+                        this.direction = 'p';
+                    break;
+                case 'ArrowLeft':
+                    if (this.direction != 'p')
+                        this.direction = 'l';
                     break;
                 case 'Escape':
                     this.isStopped = !this.isStopped;
-                    console.log(this.isStopped);
                     break;
             }
         });
