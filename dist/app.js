@@ -49,6 +49,19 @@ class SnakeMap {
         this.apple = new Apple(5, 5);
         this.generateMap();
     }
+    detectIfSnakeEatApple() {
+        return (this.snake.head.x == this.apple.getCoords().x) &&
+            (this.snake.head.y == this.apple.getCoords().y);
+    }
+    generateNewAppleCoords() {
+        let x;
+        let y;
+        do {
+            x = Math.floor(Math.random() * 19) + 1;
+            y = Math.floor(Math.random() * 19) + 1;
+        } while (this.snake.getCoords().some(c => c.x === x && c.y === y));
+        this.apple.setCoords(x, y);
+    }
     generateMap() {
         this.mapContent = '';
         for (let y = 0; y < this.height; y++) {
@@ -103,7 +116,7 @@ class GameRound {
             case 'p':
                 this.map.currentCoords.x++;
                 if (this.map.currentCoords.x >= this.map.width) {
-                    this.map.currentCoords.x = 1;
+                    this.map.currentCoords.x = 0;
                 }
                 break;
             case 'l':
@@ -112,6 +125,10 @@ class GameRound {
                     this.map.currentCoords.x = this.map.width - 1;
                 }
                 break;
+        }
+        if (this.map.detectIfSnakeEatApple()) {
+            this.map.snake.currentLenght++;
+            this.map.generateNewAppleCoords();
         }
         this.map.snake.coordinates.push(Object.assign({}, this.map.currentCoords)); // tworzenie kopii koordynatów a nie przekazywanie referencji do nich
         this.map.snake.head = Object.assign({}, this.map.currentCoords);
