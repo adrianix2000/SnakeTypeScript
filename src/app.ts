@@ -10,7 +10,7 @@ class Block {
     }
 
     getBlockHTML(): string {
-        return `<p style='background: ${this.color}; width: ${this.width}px; height: ${this.height}px; display: inline-block; margin-right: 4px; margin-top: 0px; margin-bottom: 0px;'></p>`;
+        return `<p class="block"'></p>`;
     }
 }
 
@@ -32,7 +32,7 @@ class Snake {
     }
 
     generateHTML(): string {
-        return `<p style='background: ${this.color}; width: 25px; height: 25px; display: inline-block; margin-right: 4px; margin-top: 0px; margin-bottom: 0px;'></p>`;
+        return `<p class="block snake"></p>`;
     }
 }
 
@@ -54,7 +54,7 @@ class Apple {
     }
 
     generateHTML(): string {
-        return `<p style='background: ${this.color}; width: 25px; height: 25px; display: inline-block; margin-right: 4px; margin-top: 0px; margin-bottom: 0px;'></p>`;
+        return `<p class="block apple"></p>`;
     }
 }
 
@@ -204,26 +204,39 @@ class GameRound {
     }
 
     private setupKeyboardControls() {
+        let isChangingDirection = false;
+    
         document.addEventListener('keydown', (event) => {
-            switch (event.key) {
-                case 'ArrowDown':
-                    if (this.direction != 'd') this.direction = 'g';
-                    break;
-                case 'ArrowUp':
-                    if (this.direction != 'g') this.direction = 'd';
-                    break;
-                case 'ArrowRight':
-                    if (this.direction != 'l') this.direction = 'p';
-                    break;
-                case 'ArrowLeft':
-                    if (this.direction != 'p') this.direction = 'l';
-                    break;
-                case 'Escape':
-                    this.isStopped = !this.isStopped;
-                    break;
+            if (isChangingDirection) {
+                return; // Jeśli już trwa zmiana kierunku, zignoruj kolejne zdarzenia
             }
+    
+            isChangingDirection = true;
+    
+            setTimeout(() => {
+                switch (event.key) {
+                    case 'ArrowDown':
+                        if (this.direction != 'd') this.direction = 'g';
+                        break;
+                    case 'ArrowUp':
+                        if (this.direction != 'g') this.direction = 'd';
+                        break;
+                    case 'ArrowRight':
+                        if (this.direction != 'l') this.direction = 'p';
+                        break;
+                    case 'ArrowLeft':
+                        if (this.direction != 'p') this.direction = 'l';
+                        break;
+                    case 'Escape':
+                        this.isStopped = !this.isStopped;
+                        break;
+                }
+    
+                isChangingDirection = false; // Resetuj flagę po zakończeniu opóźnienia
+            }, 30); // Opóźnienie 200ms (lub dostosuj według potrzeb)
         });
     }
+    
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -1,0 +1,44 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+#container {
+   background-color: rgba(107, 142, 35);
+   width: 100%;
+   height: 100%;
+}
+
+#app {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(107, 142, 35);
+}
+
+.block {
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    margin-right: 4px;
+    margin-top: 0;
+    margin-bottom: 0;
+    background: rgba(0, 100, 0);
+    border-radius: 4px;
+}
+
+.snake {
+    background: rgba(0,51,0);
+}
+
+.apple {
+    border-radius: 10px;
+    background-image: url('assets/apple.png'); /* Podaj ścieżkę do obrazka */
+    background-size: cover; /* Dostosuj wielkość obrazka do wymiarów bloku */
+    background-color: rgba(107, 142, 35);
+}
+
